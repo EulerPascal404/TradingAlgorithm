@@ -2,6 +2,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import yfinance as yf
 from scipy.optimize import brute
 plt.style.use("seaborn")
 
@@ -59,10 +60,12 @@ class SMABacktester():
     def get_data(self):
         ''' Retrieves and prepares the data.
         '''
-        raw = pd.read_csv("forex_pairs.csv", parse_dates = ["Date"], index_col = "Date")
-        raw = raw[self.symbol].to_frame().dropna()
+        raw = yf.download(tickers = ["AAPL"], start = self.start, end = self.end)
+        raw = raw["Close"].to_frame().dropna()
+        # raw = pd.read_csv("forex_pairs.csv", parse_dates = ["Date"], index_col = "Date")
+        # raw = raw[self.symbol].to_frame()
         raw = raw.loc[self.start:self.end]
-        raw.rename(columns={self.symbol: "price"}, inplace=True)
+        raw.rename(columns={"Close": "price"}, inplace=True)
         raw["returns"] = np.log(raw / raw.shift(1))
         raw["SMA_S"] = raw["price"].rolling(self.SMA_S).mean()
         raw["SMA_L"] = raw["price"].rolling(self.SMA_L).mean()
