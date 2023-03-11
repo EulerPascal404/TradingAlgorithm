@@ -60,7 +60,7 @@ class SMABacktester():
     def get_data(self):
         ''' Retrieves and prepares the data.
         '''
-        raw = yf.download(tickers = ["AAPL"], start = self.start, end = self.end)
+        raw = yf.download(tickers = self.symbol, start = self.start, end = self.end)
         raw = raw["Close"].to_frame().dropna()
         # raw = pd.read_csv("forex_pairs.csv", parse_dates = ["Date"], index_col = "Date")
         # raw = raw[self.symbol].to_frame()
